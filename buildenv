@@ -1,0 +1,35 @@
+# Update bump details accordingly. Use bump check to confirm.
+# bump: tmux-version /TMUX_VERSION="(.*)"/ https://github.com/tmux/tmux.git|semver:*
+# TMUX_VERSION="V.R.M" # Specify a stable release
+export ZOPEN_STABLE_URL="https://github.com/tmux/tmux.git"
+export ZOPEN_STABLE_TAG="3.3a"
+export ZOPEN_STABLE_DEPS="zoslib coreutils libevent make perl autoconf m4 automake ncurses bison flex"
+export ZOPEN_DEV_URL="https://github.com/tmux/tmux.git"
+export ZOPEN_DEV_DEPS="zoslib coreutils libevent make perl autoconf m4 automake ncurses pkgconfig bison flex"
+export ZOPEN_BUILD_LINE="STABLE"
+export ZOPEN_CATEGORIES="development"
+
+export ZOPEN_BOOTSTRAP="./autogen.sh"
+export ZOPEN_COMP=CLANG
+export ZOPEN_EXTRA_CPPFLAGS="-I\${NCURSES_HOME}/include/ncurses"
+export ZOPEN_EXTRA_CFLAGS="-O0"
+
+zopen_check_results()
+{
+  dir="$1"
+  pfx="$2"
+  chk="$1/$2_check.log"
+
+  # Echo the following information to gauge build health
+  echo "actualFailures:0"
+  echo "totalTests:1"
+  echo "expectedFailures:0"
+  echo "expectedTotalTests:1"
+}
+
+zopen_get_version()
+{
+  # Modify to echo the version of your tool/library
+  # Rather than hardcoding the version, obtain the version by running the tool/library
+  echo "1.0.0"
+}

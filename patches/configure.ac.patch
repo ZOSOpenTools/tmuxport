@@ -1,0 +1,23 @@
+diff --git a/configure.ac b/configure.ac
+index 2b8b3b11..8c983749 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -816,6 +816,10 @@ case "$host_os" in
+ 		AC_MSG_RESULT(aix)
+ 		PLATFORM=aix
+ 		;;
++	*openedition*)
++		AC_MSG_RESULT(zos)
++		PLATFORM=zos
++		;;
+ 	*darwin*)
+ 		AC_MSG_RESULT(darwin)
+ 		PLATFORM=darwin
+@@ -904,6 +908,7 @@ case "$host_os" in
+ esac
+ AC_SUBST(PLATFORM)
+ AM_CONDITIONAL(IS_AIX, test "x$PLATFORM" = xaix)
++AM_CONDITIONAL(IS_ZOS, test "x$PLATFORM" = xzos)
+ AM_CONDITIONAL(IS_DARWIN, test "x$PLATFORM" = xdarwin)
+ AM_CONDITIONAL(IS_DRAGONFLY, test "x$PLATFORM" = xdragonfly)
+ AM_CONDITIONAL(IS_LINUX, test "x$PLATFORM" = xlinux)

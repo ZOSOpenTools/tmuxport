@@ -1,0 +1,16 @@
+diff --git a/alerts.c b/alerts.c
+index d3c5df05..c2979e9e 100644
+--- a/alerts.c
++++ b/alerts.c
+@@ -135,6 +135,11 @@ alerts_reset_all(void)
+ 		alerts_reset(w);
+ }
+ 
++void timerclear(struct timeval *tvp) {
++    tvp->tv_sec = 0;
++    tvp->tv_usec = 0;
++}
++
+ static void
+ alerts_reset(struct window *w)
+ {

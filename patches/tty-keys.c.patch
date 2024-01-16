@@ -1,0 +1,22 @@
+diff --git a/tty-keys.c b/tty-keys.c
+index 64dd91bb..d038aa05 100644
+--- a/tty-keys.c
++++ b/tty-keys.c
+@@ -819,7 +819,7 @@ complete_key:
+ 	 * used. termios should have a better idea.
+ 	 */
+ 	bspace = tty->tio.c_cc[VERASE];
+-	if (bspace != _POSIX_VDISABLE && (key & KEYC_MASK_KEY) == bspace)
++	if (/*bspace != _POSIX_VDISABLE &&*/ (key & KEYC_MASK_KEY) == bspace)
+ 		key = (key & KEYC_MASK_MODIFIERS)|KEYC_BSPACE;
+ 
+ 	/* Remove data from buffer. */
+@@ -933,7 +933,7 @@ tty_keys_extended_key(struct tty *tty, const char *buf, size_t len,
+ 
+ 	/* Store the key. */
+ 	bspace = tty->tio.c_cc[VERASE];
+-	if (bspace != _POSIX_VDISABLE && number == bspace)
++	if (/*bspace != _POSIX_VDISABLE &&*/ number == bspace)
+ 		nkey = KEYC_BSPACE;
+ 	else
+ 		nkey = number;
