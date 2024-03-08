@@ -1,0 +1,14 @@
+diff --git a/spawn.c b/spawn.c
+index 2cb2b65e..de376d5c 100644
+--- a/spawn.c
++++ b/spawn.c
+@@ -411,6 +411,9 @@ spawn_pane(struct spawn_context *sc, char **cause)
+ 		now.c_cc[VERASE] = key;
+ #ifdef IUTF8
+ 	now.c_iflag |= IUTF8;
++#endif
++#ifdef __MVS__
++  now.c_oflag |= (OPOST|ONLCR);
+ #endif
+ 	if (tcsetattr(STDIN_FILENO, TCSANOW, &now) != 0)
+ 		_exit(1);

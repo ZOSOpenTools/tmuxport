@@ -1,0 +1,33 @@
+diff --git a/tmux.h b/tmux.h
+index 53084b8b..fc83de21 100644
+--- a/tmux.h
++++ b/tmux.h
+@@ -19,6 +19,7 @@
+ #ifndef TMUX_H
+ #define TMUX_H
+ 
++#define environ environ_replace
+ #include <sys/time.h>
+ #include <sys/uio.h>
+ 
+@@ -26,6 +27,8 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <termios.h>
++#include <stdlib.h>
++#undef environ
+ 
+ #ifdef HAVE_UTEMPTER
+ #include <utempter.h>
+@@ -35,7 +38,11 @@
+ #include "tmux-protocol.h"
+ #include "xmalloc.h"
+ 
++#ifdef __MVS__
++char   **environ;
++#else
+ extern char   **environ;
++#endif
+ 
+ struct args;
+ struct args_command_state;

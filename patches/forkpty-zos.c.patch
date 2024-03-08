@@ -1,0 +1,120 @@
+diff --git a/compat/forkpty-zos.c b/compat/forkpty-zos.c
+new file mode 100644
+index 00000000..fff6e54e
+--- /dev/null
++++ b/compat/forkpty-zos.c
+@@ -0,0 +1,114 @@
++/*
++ * Copyright (c) 2009 Nicholas Marriott <nicholas.marriott@gmail.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF MIND, USE, DATA OR PROFITS, WHETHER
++ * IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
++ * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++#include <sys/types.h>
++#include <sys/ioctl.h>
++
++#include <fcntl.h>
++#include <stdlib.h>
++#include <stropts.h>
++#include <unistd.h>
++#include <errno.h>
++
++#include "compat.h"
++
++void fatal(const char *, ...);
++void fatalx(const char *, ...);
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <termios.h>
++#include <sys/ioctl.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++
++#define TTY_NAME_MAX 64
++
++pid_t forkpty(int *master, __unused char *name, struct termios *tio, struct winsize *ws) {
++    int slave = -1, fd;
++    char master_dev[TTY_NAME_MAX], slave_dev[TTY_NAME_MAX];
++    pid_t pid;
++
++    // Iterating through the 4-digit ptyp and ttyp devices
++    for (int i = 0; i < 10000; i++) {  // Maximum 9999 for 4-digit format
++        snprintf(master_dev, sizeof(master_dev), "/dev/ptyp%04d", i);
++        snprintf(slave_dev, sizeof(slave_dev), "/dev/ttyp%04d", i);
++
++        if ((*master = open(master_dev, O_RDWR | O_NOCTTY)) != -1) {
++        if (grantpt(*master) != 0)
++         goto out;
++        if (unlockpt(*master) != 0)
++          goto out;
++
++            if ((slave = open(slave_dev, O_RDWR | O_NOCTTY)) != -1) {
++                break;  // Found an available pair
++            }
++            close(*master);
++        }
++    }
++
++    if (slave == -1)
++        goto out;
++
++    if (name != NULL)
++        strlcpy(name, slave_dev, TTY_NAME_MAX);
++
++    // Rest of your code remains mostly unchanged, using 'slave' as the slave fd
++
++    switch (pid = fork()) {
++        case -1:
++            goto out;
++        case 0:
++        close(*master);
++
++        fd = open(_PATH_TTY, O_RDWR|O_NOCTTY);
++        if (fd >= 0) {
++          ioctl(fd, TIOCNOTTY, NULL);
++          close(fd);
++        }
++
++        if (setsid() < 0)
++          fatal("setsid");
++
++        int flag = 1; ioctl(slave, TIOCPKT, &flag);
++        if (tio != NULL && tcsetattr(slave, TCSAFLUSH, tio) == -1)
++          fatal("tcsetattr failed");
++        if (ioctl(slave, TIOCSWINSZ, ws) == -1)
++          fatal("ioctl failed");
++
++        dup2(slave, 0);
++        dup2(slave, 1);
++        dup2(slave, 2);
++        if (slave > 2)
++          close(slave);
++
++        return (0);
++    }
++
++    close(slave);
++    return (pid);
++
++out:
++    if (*master != -1)
++        close(*master);
++    if (slave != -1)
++        close(slave);
++
++    return (-1);
++}

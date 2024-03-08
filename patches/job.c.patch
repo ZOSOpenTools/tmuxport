@@ -1,0 +1,26 @@
+diff --git a/job.c b/job.c
+index d2d9adbf..9b6b3246 100644
+--- a/job.c
++++ b/job.c
+@@ -99,8 +99,13 @@ job_run(const char *cmd, int argc, char **argv, struct environ *e, struct sessio
+ 		ws.ws_row = sy;
+ 		pid = fdforkpty(ptm_fd, &master, tty, NULL, &ws);
+ 	} else {
++#ifdef __MVS__
++    if (pipe(out) != 0)
++			goto fail;
++#else
+ 		if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, out) != 0)
+ 			goto fail;
++#endif
+ 		pid = fork();
+ 	}
+ 	if (cmd == NULL) {
+@@ -129,6 +134,7 @@ job_run(const char *cmd, int argc, char **argv, struct environ *e, struct sessio
+ 
+ 		environ_push(env);
+ 		environ_free(env);
++    setenv("_BPXK_AUTOCVT", "ON", 1);
+ 
+ 		if (~flags & JOB_PTY) {
+ 			if (dup2(out[1], STDIN_FILENO) == -1)

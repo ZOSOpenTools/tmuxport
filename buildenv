@@ -7,12 +7,12 @@ export ZOPEN_STABLE_DEPS="zoslib coreutils libevent make perl autoconf m4 automa
 export ZOPEN_DEV_URL="https://github.com/tmux/tmux.git"
 export ZOPEN_DEV_DEPS="zoslib coreutils libevent make perl autoconf m4 automake ncurses pkgconfig bison flex"
 export ZOPEN_BUILD_LINE="STABLE"
+export ZOPEN_RUNTIMEDEPS="bash"
 export ZOPEN_CATEGORIES="development"
 
 export ZOPEN_BOOTSTRAP="./autogen.sh"
 export ZOPEN_COMP=CLANG
 export ZOPEN_EXTRA_CPPFLAGS="-I\${NCURSES_HOME}/include/ncurses"
-export ZOPEN_EXTRA_CFLAGS="-O0"
 
 zopen_check_results()
 {
@@ -29,7 +29,11 @@ zopen_check_results()
 
 zopen_get_version()
 {
-  # Modify to echo the version of your tool/library
-  # Rather than hardcoding the version, obtain the version by running the tool/library
-  echo "1.0.0"
+  ./tmux -V | cut -f2 -d' ' | sed -e 's/a//'
+}
+
+zopen_caveats()
+{
+  echo "Tmux requires bash to be used as the shell"
+  echo "Follow the directions in https://github.com/ZOSOpenTools/tmuxport/blob/main/README.md"
 }

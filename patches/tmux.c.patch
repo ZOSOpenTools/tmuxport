@@ -1,0 +1,30 @@
+diff --git a/tmux.c b/tmux.c
+index b9f2be30..908e9729 100644
+--- a/tmux.c
++++ b/tmux.c
+@@ -16,6 +16,7 @@
+  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++#define environ environ_replace
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/utsname.h>
+@@ -30,6 +31,7 @@
+ #include <string.h>
+ #include <time.h>
+ #include <unistd.h>
++#undef environ
+ 
+ #include "tmux.h"
+ 
+@@ -331,6 +333,9 @@ getversion(void)
+ int
+ main(int argc, char **argv)
+ {
++#ifdef __MVS__
++  environ = (*(__EnvnA()));
++#endif
+ 	char					*path = NULL, *label = NULL;
+ 	char					*cause, **var;
+ 	const char				*s, *cwd;
