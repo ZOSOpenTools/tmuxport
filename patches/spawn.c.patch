@@ -1,8 +1,17 @@
 diff --git a/spawn.c b/spawn.c
-index 2cb2b65e..de376d5c 100644
+index 2cb2b65e..11022099 100644
 --- a/spawn.c
 +++ b/spawn.c
-@@ -411,6 +411,9 @@ spawn_pane(struct spawn_context *sc, char **cause)
+@@ -23,6 +23,8 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
++#include <stdio.h>
++#include <fcntl.h>
+ 
+ #include "tmux.h"
+ 
+@@ -411,6 +413,9 @@ spawn_pane(struct spawn_context *sc, char **cause)
  		now.c_cc[VERASE] = key;
  #ifdef IUTF8
  	now.c_iflag |= IUTF8;
@@ -12,3 +21,26 @@ index 2cb2b65e..de376d5c 100644
  #endif
  	if (tcsetattr(STDIN_FILENO, TCSANOW, &now) != 0)
  		_exit(1);
+@@ -422,6 +427,22 @@ spawn_pane(struct spawn_context *sc, char **cause)
+ 	log_close();
+ 	environ_push(child);
+ 
++
++#ifdef __MVS__
++  int tty_fd;
++  char *tty;
++
++  tty_fd = open ("/dev/tty", O_RDWR|O_NONBLOCK);
++
++  if (tty_fd < 0)
++    {
++      tty = (char *)ttyname (fileno (stdin));
++      tty_fd = open (tty, O_RDWR|O_NONBLOCK);
++    }
++  if (tty_fd >= 0)
++    close (tty_fd);
++#endif
++
+ 	/*
+ 	 * If given multiple arguments, use execvp(). Copy the arguments to
+ 	 * ensure they end in a NULL.
