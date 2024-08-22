@@ -7,7 +7,7 @@ export ZOPEN_STABLE_DEPS="zoslib coreutils libevent make perl autoconf m4 automa
 export ZOPEN_DEV_URL="https://github.com/tmux/tmux.git"
 export ZOPEN_DEV_DEPS="zoslib coreutils libevent make perl autoconf m4 automake ncurses pkgconfig bison flex"
 export ZOPEN_BUILD_LINE="STABLE"
-export ZOPEN_RUNTIMEDEPS="bash"
+export ZOPEN_RUNTIME_DEPS="ncurses"
 export ZOPEN_CATEGORIES="development"
 
 export ZOPEN_BOOTSTRAP="./autogen.sh"
