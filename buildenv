@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: tmux-version /TMUX_VERSION="(.*)"/ https://github.com/tmux/tmux.git|semver:*
-# TMUX_VERSION="V.R.M" # Specify a stable release
+# TMUX_VERSION="3.5" # Specify a stable release
 export ZOPEN_STABLE_URL="https://github.com/tmux/tmux.git"
 export ZOPEN_STABLE_TAG="3.3a"
 export ZOPEN_STABLE_DEPS="zoslib coreutils libevent make perl autoconf m4 automake ncurses bison flex"
